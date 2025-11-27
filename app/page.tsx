@@ -21,6 +21,9 @@ interface GuestbookEntry {
   author: string;
   message: string;
   createdAt: string;
+  likes: number;
+  likedBy: string[];
+  isLikedByCurrentUser?: boolean; // 클라이언트 사이드에서만 사용
 }
 
 export default function Home() {
@@ -30,6 +33,8 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [guestbookError, setGuestbookError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [likedEntries, setLikedEntries] = useState<Set<number>>(new Set());
+  const [currentUserIP, setCurrentUserIP] = useState<string>('');
 
   // 방명록 데이터 로드
   useEffect(() => {
@@ -41,7 +46,20 @@ export default function Home() {
       const response = await fetch('/api/guestbook');
       const data = await response.json();
       if (data.success) {
+        // 방명록 데이터 설정
         setGuestbookEntries(data.data);
+
+        // 현재 사용자 IP 저장
+        setCurrentUserIP(data.currentUserIP || '');
+
+        // 이미 좋아요한 항목들 초기화
+        const likedIds = new Set<number>();
+        data.data.forEach((entry: any) => {
+          if (entry.isLikedByCurrentUser) {
+            likedIds.add(entry.id);
+          }
+        });
+        setLikedEntries(likedIds);
       }
     } catch (error) {
       console.error('방명록 로드 실패:', error);
@@ -71,7 +89,7 @@ export default function Home() {
 
       if (data.success) {
         setNewGuestbook({ author: '', message: '' });
-        await fetchGuestbook(); // 목록 새로고침
+        await fetchGuestbook(); // 목록 새로고침 (좋아요 상태도 함께 업데이트됨)
       } else {
         setGuestbookError(data.error || '방명록 등록에 실패했습니다.');
       }
@@ -99,7 +117,7 @@ export default function Home() {
 
       if (data.success) {
         console.log('삭제 성공');
-        await fetchGuestbook(); // 목록 새로고침
+        await fetchGuestbook(); // 목록 새로고침 (좋아요 상태도 함께 업데이트됨)
         setDeleteConfirm(null); // 확인 모달 닫기
       } else {
         console.error('삭제 실패:', data.error);
@@ -107,6 +125,42 @@ export default function Home() {
       }
     } catch (error) {
       console.error('네트워크 오류:', error);
+      alert('네트워크 오류가 발생했습니다.');
+    }
+  };
+
+  const handleLikeGuestbook = async (id: number) => {
+    try {
+      const response = await fetch(`/api/guestbook/${id}/like`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // 로컬 상태 업데이트 (실시간 반영)
+        setGuestbookEntries(prev =>
+          prev.map(entry =>
+            entry.id === id
+              ? { ...entry, likes: data.data.likes }
+              : entry
+          )
+        );
+
+        // 좋아요 상태 업데이트
+        setLikedEntries(prev => {
+          const newSet = new Set(prev);
+          if (data.data.isLiked) {
+            newSet.add(id);
+          } else {
+            newSet.delete(id);
+          }
+          return newSet;
+        });
+      } else {
+        alert('좋아요 처리에 실패했습니다: ' + data.error);
+      }
+    } catch (error) {
       alert('네트워크 오류가 발생했습니다.');
     }
   };
@@ -462,7 +516,35 @@ export default function Home() {
                           </button>
                         </div>
                       </div>
-                      <p className="text-gray-700 leading-relaxed">{entry.message}</p>
+                      <p className="text-gray-700 leading-relaxed mb-3">{entry.message}</p>
+
+                      {/* 좋아요 버튼 */}
+                      <div className="flex items-center justify-between">
+                        <button
+                          onClick={() => handleLikeGuestbook(entry.id)}
+                          className={`flex items-center space-x-2 px-3 py-1 rounded-full transition-all duration-200 ${
+                            likedEntries.has(entry.id)
+                              ? 'text-red-500 bg-red-50 hover:bg-red-100'
+                              : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                          }`}
+                          title={likedEntries.has(entry.id) ? '좋아요 취소' : '좋아요'}
+                        >
+                          <svg
+                            className={`w-5 h-5 ${likedEntries.has(entry.id) ? 'fill-current' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                            />
+                          </svg>
+                          <span className="text-sm font-medium">{entry.likes}</span>
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

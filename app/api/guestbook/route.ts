@@ -8,14 +8,26 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const offset = parseInt(searchParams.get('offset') || '0');
 
+    // 현재 사용자 IP 가져오기
+    const currentUserIP = request.headers.get('x-forwarded-for') ||
+                         request.headers.get('x-real-ip') ||
+                         'unknown';
+
     const paginatedEntries = getGuestbookEntries(limit, offset);
+
+    // 각 항목에 대해 현재 사용자가 좋아요했는지 여부 추가
+    const entriesWithLikeStatus = paginatedEntries.map(entry => ({
+      ...entry,
+      isLikedByCurrentUser: entry.likedBy.includes(currentUserIP)
+    }));
 
     return NextResponse.json({
       success: true,
-      data: paginatedEntries,
+      data: entriesWithLikeStatus,
       total: getTotalCount(),
       limit,
       offset,
+      currentUserIP,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
