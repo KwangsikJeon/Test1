@@ -170,7 +170,6 @@ export const getTotalCount = (): number => {
   data = loadData(); // 최신 데이터 로드
   return data.entries.length;
 };
-
 // 개발용 함수 (실제 서비스에서는 제거)
 export const resetGuestbookData = (): void => {
   guestbookEntries = [
@@ -195,3 +194,4 @@ export const resetGuestbookData = (): void => {
   ];
   nextId = 4;
 };
+
