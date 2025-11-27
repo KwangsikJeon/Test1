@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
 :root {
+  /* 네이버블로그 스타일 색상 팔레트 */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #212529;
+  --muted: #f8f9fa;
+  --muted-foreground: #6c757d;
+  --border: #e9ecef;
+  --card: #ffffff;
+  --naver-green: #00c73c;
+  --naver-blue: #03c75a;
+  --shadow: rgba(0, 0, 0, 0.1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-naver-green: var(--naver-green);
+  --color-naver-blue: var(--naver-blue);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* 네이버블로그 스타일 컴포넌트 */
+.naver-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow);
+  transition: box-shadow 0.2s ease;
+}
+
+.naver-card:hover {
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+.naver-button {
+  background: var(--naver-green);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.naver-button:hover {
+  background: var(--naver-blue);
+}
+
+.naver-button-secondary {
+  background: var(--muted);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.naver-button-secondary:hover {
+  background: var(--border);
+}
+
+.naver-section {
+  margin-bottom: 40px;
+}
+
+.naver-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--naver-green);
+  padding-bottom: 8px;
+}
+
+.naver-subtitle {
+  font-size: 16px;
+  color: var(--muted-foreground);
+  margin-bottom: 24px;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1a1a1a;
+    --foreground: #f8f9fa;
+    --muted: #2d3436;
+    --muted-foreground: #b2bec3;
+    --border: #424242;
+    --card: #2d3436;
+    --shadow: rgba(0, 0, 0, 0.3);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
 }
