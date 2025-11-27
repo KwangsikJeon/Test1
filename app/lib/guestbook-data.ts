@@ -172,26 +172,35 @@ export const getTotalCount = (): number => {
 };
 // 개발용 함수 (실제 서비스에서는 제거)
 export const resetGuestbookData = (): void => {
-  guestbookEntries = [
-    {
-      id: 1,
-      author: "개발자 A",
-      message: "멋진 포트폴리오네요! 앞으로도 좋은 프로젝트 많이 만들어보세요!",
-      createdAt: "2024-11-27T10:00:00.000Z"
-    },
-    {
-      id: 2,
-      author: "디자이너 B",
-      message: "UI/UX가 정말 깔끔하고 직관적이에요. 협업하고 싶습니다!",
-      createdAt: "2024-11-26T15:30:00.000Z"
-    },
-    {
-      id: 3,
-      author: "PM C",
-      message: "기술 스택도 적절하고, 코드 퀄리티가 좋아보입니다. 좋은 인재네요!",
-      createdAt: "2024-11-25T09:15:00.000Z"
-    }
-  ];
-  nextId = 4;
+  data = {
+    entries: [
+      {
+        id: 1,
+        author: "개발자 A",
+        message: "멋진 포트폴리오네요! 앞으로도 좋은 프로젝트 많이 만들어보세요!",
+        createdAt: "2024-11-27T10:00:00.000Z",
+        likes: 3,
+        likedBy: ["192.168.1.1", "192.168.1.2", "192.168.1.3"]
+      },
+      {
+        id: 2,
+        author: "디자이너 B",
+        message: "UI/UX가 정말 깔끔하고 직관적이에요. 협업하고 싶습니다!",
+        createdAt: "2024-11-26T15:30:00.000Z",
+        likes: 5,
+        likedBy: ["192.168.1.4", "192.168.1.5", "192.168.1.6", "192.168.1.7", "192.168.1.8"]
+      },
+      {
+        id: 3,
+        author: "PM C",
+        message: "기술 스택도 적절하고, 코드 퀄리티가 좋아보입니다. 좋은 인재네요!",
+        createdAt: "2024-11-25T09:15:00.000Z",
+        likes: 2,
+        likedBy: ["192.168.1.9", "192.168.1.10"]
+      }
+    ],
+    nextId: 4
+  };
+  saveData(data); // 변경사항 저장
 };
 

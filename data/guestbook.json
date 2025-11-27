@@ -15,15 +15,6 @@
       "author": "PM C",
       "message": "기술 스택도 적절하고, 코드 퀄리티가 좋아보입니다. 좋은 인재네요!",
       "createdAt": "2024-11-25T09:15:00.000Z",
-      "likes": 0,
-      "likedBy": []
-    },
-    {
-      "id": 6,
-      "author": "11",
-      "message": "22",
-      "createdAt": "2025-11-27T07:39:48.468Z",
-      "ip": "::1",
       "likes": 1,
       "likedBy": [
         "::1"
